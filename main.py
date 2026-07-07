@@ -1,13 +1,13 @@
 from dotenv import load_dotenv
+from langchain_core.output_parsers import StrOutputParser
 load_dotenv()
 
 import streamlit as st
 from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 
 st.header("College Research Assistant")
-
+parser = StrOutputParser()
 college_name = st.selectbox("Select a college", [
     "Harvard University",
     "Stanford University",
@@ -27,6 +27,7 @@ if st.button("Submit") and user_input:
     ])
 
     chain = prompt | model | StrOutputParser()
-    result = chain.invoke({"college": college_name, "question": user_input})
+    response = chain.invoke({"college": college_name, "question": user_input})
+    result = parser.invoke(response)
 
     st.write(result)
